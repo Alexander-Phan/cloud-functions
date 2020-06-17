@@ -1,25 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import * as firebase from "firebase";
+import app from "./firebase/firebase";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Home from "./Home";
+import Secret from "./Secret";
+import Login from "./Login";
 
 function App() {
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    try {
+      app.auth().onAuthStateChanged(setCurrentUser);
+    } catch (err) {
+      console.log(err.message);
+    }
+  }, []);
+
+  if (currentUser) {
+    console.log("User is logged in");
+  } else {
+    console.log("User not logged in.");
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/secret" component={Secret} />
+      </Switch>
+    </Router>
   );
 }
 
